@@ -5,6 +5,7 @@ Our goal is to create a campus-wide reservation system that allows students and 
 ## Technology Used
 
 Front-end: React, Typescript, Vite, Bun
+Back-end: Python Flask
 
 ## Members
 
