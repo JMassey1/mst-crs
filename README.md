@@ -7,8 +7,6 @@ Our goal is to create a campus-wide reservation system that allows students and 
 Front-end: React, Typescript, Vite, Bun
 Back-end: Python Flask
 
-test test test
-
 ## Members
 
 - Grace Gevers
