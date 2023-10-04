@@ -10,6 +10,9 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./crs-api
     strategy:
       max-parallel: 4
       matrix:
@@ -17,13 +20,16 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    - name: Print directory
+      run: |
+        ls -la
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v3
       with:
         python-version: ${{ matrix.python-version }}
-    - name: Navigate to API
+    - name: Create env file
       run: |
-        cd crs-api/
+        echo "${{ secrets.ENV_FILE }}" > .env
     - name: Install Dependencies
       run: |
         python -m pip install --upgrade pip
