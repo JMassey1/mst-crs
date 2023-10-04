@@ -9,11 +9,12 @@ from django.db import models
 
 
 class Booking(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
     num_people = models.IntegerField()
     name = models.CharField(max_length=50, blank=True, null=True)
+    room = models.ForeignKey("Room", models.DO_NOTHING, db_column="room")
     created_by = models.ForeignKey("User", models.DO_NOTHING, db_column="created_by")
 
     class Meta:
@@ -22,7 +23,7 @@ class Booking(models.Model):
 
 
 class Building(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50)
     address = models.CharField(max_length=100, blank=True, null=True)
     floors = models.IntegerField()
@@ -35,7 +36,7 @@ class Building(models.Model):
 
 
 class Room(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     identifier = models.CharField(max_length=50)
     capacity = models.IntegerField()
     size = models.IntegerField(blank=True, null=True)
@@ -51,8 +52,8 @@ class Room(models.Model):
 
 
 class User(models.Model):
+    id = models.AutoField(primary_key=True)
     email = models.CharField(max_length=50)
-    id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=50)
     password = models.CharField(max_length=100)
 
