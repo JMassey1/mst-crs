@@ -14,12 +14,12 @@ jobs:
         working-directory: ./crs-web
     strategy:
       matrix:
-        node-version: ["14.x", "15.x"]
+        node-version: ["18.x", "19.x"]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Setup Node.js
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
       - name: npm ci, build, and test
