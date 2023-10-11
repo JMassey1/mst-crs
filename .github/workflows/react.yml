@@ -1,0 +1,28 @@
+name: React CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./crs-web
+    strategy:
+      matrix:
+        node-version: ["18.x", "19.x"]
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: npm ci, build, and test
+        run: |
+          npm ci
+          npm run build --if-present
