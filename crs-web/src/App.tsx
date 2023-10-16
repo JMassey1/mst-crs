@@ -3,7 +3,8 @@ import './App.css'
 import {BuildingButton} from "./components/BuildingButton.tsx";
 import {AvaSpaces} from "./components/AvaSpaces.tsx";
 import Background, from "./background.tsx"
-import FloorButton from "./components/FloorButton.tsx";
+import {FloorButton} from "./components/FloorButton.tsx";
+
 
 
 function App() {
