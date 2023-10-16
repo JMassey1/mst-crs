@@ -8,8 +8,8 @@ export const BuildingButton = ( ) => {
     };
 
     return (
-        <div className="dropdown">
-                <button className="dropdown-button" onClick={handleOpen}>
+            <div className="dropdown">
+                <button className="dropdown-building-button" onClick={handleOpen}>
                     <div className="dropdown-text">
                         <div>Select Building</div>
                             <div
@@ -24,7 +24,7 @@ export const BuildingButton = ( ) => {
                         </div>
                     </button>
                 {open ? (
-                    <ul className="menu">
+                    <ul className="menu-building">
                         <div>
                         </div>
                             <li className="menu-item">

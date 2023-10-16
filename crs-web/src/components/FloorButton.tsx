@@ -9,9 +9,9 @@ export const FloorButton = ( ) => {
 
     return (
         <div className="dropdown">
-            <button className="dropdown-button" onClick={handleOpen}>
+            <button className="dropdown-floor-button" onClick={handleOpen}>
                 <div className="dropdown-text">
-                    <div>Select Building</div>
+                    <div>Select Floor</div>
                     <div
                         className="material-icons"
                         style={{
@@ -24,7 +24,7 @@ export const FloorButton = ( ) => {
                 </div>
             </button>
             {open ? (
-                <ul className="menu">
+                <ul className="menu-floor">
                     <div>
                     </div>
                     <li className="menu-item">

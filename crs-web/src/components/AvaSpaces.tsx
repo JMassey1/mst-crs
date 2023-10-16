@@ -9,7 +9,7 @@ export const AvaSpaces = ( ) => {
 
     return (
         <div className="dropdown">
-            <button className="dropdown-button" onClick={handleOpen}>
+            <button className="dropdown-ava-button" onClick={handleOpen}>
                 <div className="dropdown-text">
                     <div>Space Availability</div>
                     <div
@@ -24,7 +24,7 @@ export const AvaSpaces = ( ) => {
                 </div>
             </button>
             {open ? (
-                <ul className="menu">
+                <ul className="menu-ava">
                     <li className="menu-item">
                         <button
                             onClick={() => {
