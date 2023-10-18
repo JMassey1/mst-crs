@@ -1,17 +1,23 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 
 export const BuildingButton = ( ) => {
     const [open, setOpen] = useState(false);
+    const [selectedRoom, setSelectedRoom] = useState("Select Building")
+
     const handleOpen = () => {
         setOpen(!open);
     };
+
+    const handleRoomChange = (newRoom: string): void => {
+        setSelectedRoom(newRoom);
+    }
 
     return (
             <div className="dropdown">
                 <button className="dropdown-building-button" onClick={handleOpen}>
                     <div className="dropdown-text">
-                        <div>Select Building</div>
+                        <div>{ selectedRoom }</div>
                             <div
                                 className="material-icons"
                                 style={{
@@ -25,43 +31,54 @@ export const BuildingButton = ( ) => {
                     </button>
                 {open ? (
                     <ul className="menu-building">
-                        <div>
-                        </div>
-                            <li className="menu-item">
-                                <button
-                                    onClick={() => {
-                                        handleOpen();
-                                    }}
-                                >Computer Science
-                                </button>
-                            </li>
-                            <li className="menu-item">
-                                <button
-                                    onClick={() => {
-                                        handleOpen();
-                                    }}
-                                >Havener Center
-                                </button>
-                            </li>
                         <li className="menu-item">
                             <button
                                 onClick={() => {
                                     handleOpen();
+                                    handleRoomChange("Select Building");
                                 }}
-                            >Curtis Law Wilson Library
+                            >Select Building
                             </button>
                         </li>
                         <li className="menu-item">
                             <button
                                 onClick={() => {
                                     handleOpen();
+                                    handleRoomChange("Computer Science");
                                 }}
-                            >Humanities and Social Science
+                            >Computer Science
                             </button>
                         </li>
-                    </ul>
-                ) : null}
-            </div>
+                        <li className="menu-item">
+                            <button
+                                onClick={() => {
+                                    handleOpen();
+                                    handleRoomChange("Havener Center");
+                                }}
+                            >Havener Center
+                            </button>
+                        </li>
+                    <li className="menu-item">
+                        <button
+                            onClick={() => {
+                                handleOpen();
+                                handleRoomChange("Curtis Law Wilson Library");
+                            }}
+                        >Curtis Law Wilson Library
+                        </button>
+                    </li>
+                    <li className="menu-item">
+                        <button
+                            onClick={() => {
+                                handleOpen();
+                                handleRoomChange("Humanities and Social Science");
+                            }}
+                        >Humanities and Social Science
+                        </button>
+                    </li>
+                </ul>
+            ) : null}
+        </div>
     );
 };
 

@@ -3,15 +3,20 @@ import React, { useState } from "react";
 
 export const FloorButton = ( ) => {
     const [open, setOpen] = useState(false);
+    const [selectedFloor, setSelectedFloor] = useState("Select Floor")
     const handleOpen = () => {
         setOpen(!open);
     };
+
+    const handleFloorChange = (newRoom: string): void => {
+        setSelectedFloor(newRoom);
+    }
 
     return (
         <div className="dropdown">
             <button className="dropdown-floor-button" onClick={handleOpen}>
                 <div className="dropdown-text">
-                    <div>Select Floor</div>
+                    <div> {selectedFloor} </div>
                     <div
                         className="material-icons"
                         style={{
@@ -31,6 +36,16 @@ export const FloorButton = ( ) => {
                         <button
                             onClick={() => {
                                 handleOpen();
+                                handleFloorChange("Select Floor");
+                            }}
+                        >Select Floor
+                        </button>
+                    </li>
+                    <li className="menu-item">
+                        <button
+                            onClick={() => {
+                                handleOpen();
+                                handleFloorChange("Basement (B)");
                             }}
                         >Basement (B)
                         </button>
@@ -39,6 +54,7 @@ export const FloorButton = ( ) => {
                         <button
                             onClick={() => {
                                 handleOpen();
+                                handleFloorChange("Ground (G)");
                             }}
                         >Ground (G)
                         </button>
@@ -47,6 +63,7 @@ export const FloorButton = ( ) => {
                         <button
                             onClick={() => {
                                 handleOpen();
+                                handleFloorChange("First (1st)");
                             }}
                         >First (1st)
                         </button>
@@ -55,6 +72,7 @@ export const FloorButton = ( ) => {
                         <button
                             onClick={() => {
                                 handleOpen();
+                                handleFloorChange("Second (2nd)");
                             }}
                         >Second (2nd)
                         </button>

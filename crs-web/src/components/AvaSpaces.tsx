@@ -3,15 +3,20 @@ import React, { useState } from "react";
 
 export const AvaSpaces = ( ) => {
     const [open, setOpen] = useState(false);
+    const [selectedSpace, setSelectedSpace] = useState("Space Availability")
     const handleOpen = () => {
         setOpen(!open);
     };
+
+    const handleSpaceChange = (newRoom: string): void => {
+        setSelectedSpace(newRoom);
+    }
 
     return (
         <div className="dropdown">
             <button className="dropdown-ava-button" onClick={handleOpen}>
                 <div className="dropdown-text">
-                    <div>Space Availability</div>
+                    <div>{ selectedSpace }</div>
                     <div
                         className="material-icons"
                         style={{
@@ -29,6 +34,16 @@ export const AvaSpaces = ( ) => {
                         <button
                             onClick={() => {
                                 handleOpen();
+                                handleSpaceChange("Space Availability");
+                            }}
+                        >Space Availability
+                        </button>
+                    </li>
+                    <li className="menu-item">
+                        <button
+                            onClick={() => {
+                                handleOpen();
+                                handleSpaceChange("1-5 people");
                             }}
                         >1-5 people
                         </button>
@@ -37,6 +52,7 @@ export const AvaSpaces = ( ) => {
                         <button
                             onClick={() => {
                                 handleOpen();
+                                handleSpaceChange("6-12 people");
                             }}
                         >6-12 people
                         </button>
@@ -45,6 +61,7 @@ export const AvaSpaces = ( ) => {
                         <button
                             onClick={() => {
                                 handleOpen();
+                                handleSpaceChange("10-20 people");
                             }}
                         >10-20 people
                         </button>
@@ -53,6 +70,7 @@ export const AvaSpaces = ( ) => {
                         <button
                             onClick={() => {
                                 handleOpen();
+                                handleSpaceChange("20+ people");
                             }}
                         >20+ people
                         </button>
