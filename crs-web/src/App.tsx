@@ -1,18 +1,25 @@
-import "./App.css";
-import { Route, Routes } from "react-router-dom";
-import Home from "./routes/Home.tsx";
+import { useState } from 'react'
+import './App.css'
+import {BuildingButton} from "./components/BuildingButton.tsx";
+import {AvaSpaces} from "./components/AvaSpaces.tsx";
+import Background, from "./background.tsx"
+import {FloorButton} from "./components/FloorButton.tsx";
 
-import Navbar from "./components/Navbar.tsx";
+
 
 function App() {
-  return (
-    <div className="App">
-      <Navbar />
-      <Routes>
-        <Route path="/" element={<Home />} />
-      </Routes>
-    </div>
-  );
+    const [count, setCount] = useState(0)
+
+    return (
+        <div className="App">
+            <Background />
+            <BuildingButton/>
+            <AvaSpaces />
+            <FloorButton />
+
+            <div  className="Background"></div>
+        </div>
+    )
 }
 
-export default App;
+export default App
