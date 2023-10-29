@@ -2,8 +2,9 @@ import { useState } from 'react'
 import './App.css'
 import {BuildingButton} from "./components/BuildingButton.tsx";
 import {AvaSpaces} from "./components/AvaSpaces.tsx";
-import Background, from "./background.tsx"
-import {FloorButton} from "./components/FloorButton.tsx";
+import Background from "./background.tsx"
+import { FloorButton } from "./components/FloorButton.tsx";
+import DBItemDropdown from "./components/DBItemDropdown.tsx"
 
 
 
@@ -16,6 +17,7 @@ function App() {
             <BuildingButton/>
             <AvaSpaces />
             <FloorButton />
+            <DBItemDropdown />
 
             <div  className="Background"></div>
         </div>
