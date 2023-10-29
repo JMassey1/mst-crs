@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 import React, { useState } from "react";
 import AsyncSelect from 'react-select';
 import api from '../api/api';
@@ -45,3 +46,13 @@ function DBItemDropdown() {
 }
 
 export default DBItemDropdown
+=======
+import React, { useState, Component } from "react";
+import Select from 'react-select';
+import axios from "axios";
+
+class DBItemDropdown extends Component {
+
+}
+
+>>>>>>> Stashed changes

@@ -4,7 +4,11 @@ import {BuildingButton} from "./components/BuildingButton.tsx";
 import {AvaSpaces} from "./components/AvaSpaces.tsx";
 import Background from "./background.tsx"
 import { FloorButton } from "./components/FloorButton.tsx";
+<<<<<<< Updated upstream
 import DBItemDropdown from "./components/DBItemDropdown.tsx"
+=======
+import Dropdown from "react-bootstrap";
+>>>>>>> Stashed changes
 
 
 
