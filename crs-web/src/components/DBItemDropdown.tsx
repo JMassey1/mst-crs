@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import AsyncSelect from "react-select";
-import api from "./../api/api.js";
+import api from "./../api/api";
 
 function DBItemDropdown() {
     const[items, setItems] = useState([]);
@@ -19,18 +19,15 @@ function DBItemDropdown() {
 
     const fetch = () => {
         return api.get("").then((response) => {
-//            const options = [];
-//            response.data.forEach((building) => {
-//                options.push({
-                    //name: building.name,
-                    //id: building.id
-//                    label: "jeff",
-//                    value: 0
-//                })
-//            });
-//            return options;
-            const options = result.data;
-            return options;
+            const options = [];
+            response.data.forEach((building) => {
+                options.push({
+                    name: building.name,
+                    id: building.id
+                })
+            });
+            const opt = response;
+            return opt;
         });
     }
 

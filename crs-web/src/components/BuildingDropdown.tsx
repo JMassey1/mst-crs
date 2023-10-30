@@ -1,4 +1,4 @@
-import DBItemDropdown from 'DBItemDropdown.tsx';
+import DBItemDropdown from 'DBItemDropdown';
 
 function BuildingDropdown() {
 

@@ -1,18 +1,15 @@
 import { useState } from 'react'
 import './App.css'
-import api from "./api/api.js";
-import {BuildingButton} from "./components/BuildingButton.tsx";
-import {AvaSpaces} from "./components/AvaSpaces.tsx";
-import Background from "./background.tsx"
-import { FloorButton } from "./components/FloorButton.tsx";
-import DBItemDropdown from "./components/DBItemDropdown.tsx"
+import {BuildingButton} from "./components/BuildingButton";
+import {AvaSpaces} from "./components/AvaSpaces";
+import Background from "./background"
+import { FloorButton } from "./components/FloorButton";
+import DBItemDropdown from "./components/DBItemDropdown"
 
 
 
 function App() {
     const [count, setCount] = useState(0)
-
-    api.get("");
 
     return (
         <div className="App">
