@@ -1,7 +1,6 @@
-<<<<<<< Updated upstream
 import React, { useState } from "react";
-import AsyncSelect from 'react-select';
-import api from '../api/api';
+import AsyncSelect from "react-select";
+import api from "./../api/api.js";
 
 function DBItemDropdown() {
     const[items, setItems] = useState([]);
@@ -19,9 +18,19 @@ function DBItemDropdown() {
     }
 
     const fetch = () => {
-        return api.get("/buildings").then(result => {
-            const res = result.data;
-            return res;
+        return api.get("").then((response) => {
+//            const options = [];
+//            response.data.forEach((building) => {
+//                options.push({
+                    //name: building.name,
+                    //id: building.id
+//                    label: "jeff",
+//                    value: 0
+//                })
+//            });
+//            return options;
+            const options = result.data;
+            return options;
         });
     }
 
@@ -46,13 +55,3 @@ function DBItemDropdown() {
 }
 
 export default DBItemDropdown
-=======
-import React, { useState, Component } from "react";
-import Select from 'react-select';
-import axios from "axios";
-
-class DBItemDropdown extends Component {
-
-}
-
->>>>>>> Stashed changes
