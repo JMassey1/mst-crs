@@ -6,3 +6,8 @@ export type Building = {
   name: string;
   open_time: string;
 };
+
+export type Capacity = {
+  min: number;
+  max: number | null;
+};
