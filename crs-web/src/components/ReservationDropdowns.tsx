@@ -18,9 +18,8 @@ const ReservationDropdowns: React.FC<ReservationDropdownsProps> = ({
     useState<DropdownOption<Building> | null>(null);
   const [selectedFloor, setSelectedFloor] =
     useState<DropdownOption<number> | null>(null);
-  const [, setSelectedCapacity] = useState<DropdownOption<Capacity> | null>(
-    null
-  );
+  const [selectedCapacity, setSelectedCapacity] =
+    useState<DropdownOption<Capacity> | null>(null);
 
   const handleBuildingSelect = (option: DropdownOption<Building> | null) => {
     if (option === null) {
@@ -33,9 +32,13 @@ const ReservationDropdowns: React.FC<ReservationDropdownsProps> = ({
         capacity: null,
       });
       return;
-    } else {
-      setSelectedBuilding(option);
     }
+    setSelectedBuilding(option);
+    onReservationInfoChange({
+      building: option?.value || null,
+      floor: selectedFloor?.value || null,
+      capacity: selectedCapacity?.value || null,
+    });
   };
 
   const handleFloorSelect = (option: DropdownOption<number> | null) => {
@@ -43,14 +46,18 @@ const ReservationDropdowns: React.FC<ReservationDropdownsProps> = ({
       setSelectedFloor(null);
       setSelectedCapacity(null);
       onReservationInfoChange({
-        building: selectedBuilding?.value || null,
+        building: null,
         floor: null,
         capacity: null,
       });
       return;
-    } else {
-      setSelectedFloor(option);
     }
+    setSelectedFloor(option);
+    onReservationInfoChange({
+      building: selectedBuilding?.value || null,
+      floor: option?.value || null,
+      capacity: selectedCapacity?.value || null,
+    });
   };
 
   const handleCapacitySelect = (option: DropdownOption<Capacity> | null) => {
@@ -113,6 +120,7 @@ const ReservationDropdowns: React.FC<ReservationDropdownsProps> = ({
     <div className="d-flex flex-row justify-content-around">
       <Col className="mr-3">
         <AsyncSelect
+          key={`unique_dropdown_key_${selectedBuilding}`}
           isSearchable={false}
           cacheOptions
           defaultOptions
@@ -125,6 +133,8 @@ const ReservationDropdowns: React.FC<ReservationDropdownsProps> = ({
       </Col>
       <Col className="mx-3">
         <Select
+          key={`unique_dropdown_key_${selectedFloor}`}
+          value={selectedFloor}
           isSearchable={false}
           isDisabled={selectedBuilding === null}
           options={getFloorOptions()}
@@ -135,6 +145,8 @@ const ReservationDropdowns: React.FC<ReservationDropdownsProps> = ({
       </Col>
       <Col className="ml-3">
         <Select
+          key={`unique_dropdown_key_${selectedCapacity}`}
+          value={selectedCapacity}
           isSearchable={false}
           isDisabled={selectedFloor === null || selectedBuilding === null}
           options={getCapacityOptions()}
