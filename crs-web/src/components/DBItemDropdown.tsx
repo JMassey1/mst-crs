@@ -44,6 +44,7 @@ function DBItemDropdown() {
             onInputChange={handleInputChange}
             onChange={handleChange}
             isClearable={true}
+            isSearchable={false}
           />
         </div>
       </div>
