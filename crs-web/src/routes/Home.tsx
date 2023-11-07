@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 
+import { Spinner } from "react-bootstrap";
+import api from "../api/api";
 import ReservationDropdowns from "../components/ReservationDropdowns";
+import RoomList from "../components/RoomList";
+import { Room } from "../types/DB_Types";
 import { ReservationData } from "../types/Util_Types";
 
 const Home: React.FC = () => {
@@ -9,28 +13,36 @@ const Home: React.FC = () => {
     floor: null,
     capacity: null,
   });
+  const [rooms, setRooms] = useState<Room[]>([]);
+  const [loadingRooms, setLoadingRooms] = useState<boolean>(false);
 
-  const handleReservationInfoChange = (
+  const handleReservationInfoChange = async (
     newReservationInfo: ReservationData
-  ): void => {
+  ): Promise<void> => {
     setReservationInfo(newReservationInfo);
-
-    console.log(generateFakeRoomData());
-  };
-
-  const generateFakeRoomData = () => {
-    const { floor, capacity } = reservationInfo;
-    const rooms = [];
-    for (let i = 1; i <= (capacity?.min ?? 0); i++) {
-      const roomNumber = `${floor}${i.toString().padStart(3, "0")}${
-        Math.random() < 0.25
-          ? String.fromCharCode(65 + Math.floor(Math.random() * 4))
-          : ""
-      }`;
-      rooms.push(roomNumber);
+    if (
+      newReservationInfo.building &&
+      newReservationInfo.floor &&
+      newReservationInfo.capacity
+    ) {
+      setLoadingRooms(true);
+      await fetchRooms();
+      setLoadingRooms(false);
+    } else {
+      setRooms([]);
     }
-    return rooms;
   };
+
+  const fetchRooms = () => {
+    return api
+      .get<Room[]>(`rooms/${reservationInfo.building?.id}`)
+      .then((response) => {
+        if (response.status === 200) {
+          setRooms(response.data);
+        }
+      });
+  };
+
   return (
     <div>
       <ReservationDropdowns
@@ -38,11 +50,8 @@ const Home: React.FC = () => {
       />
       <div className="mt-3">
         <h4>Rooms to be reserved:</h4>
-        <ul>
-          {generateFakeRoomData().map((room) => (
-            <li key={room}>{room}</li>
-          ))}
-        </ul>
+        {loadingRooms && <Spinner animation="border" />}
+        <RoomList rooms={rooms} />
       </div>
     </div>
   );

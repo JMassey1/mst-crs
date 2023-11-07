@@ -1,6 +1,6 @@
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import "./App.css";
-import Nav from "./components/Navbar";
+import Nav from "./components/Nav";
 import routes from "./routes/router";
 
 const router = createBrowserRouter(routes);

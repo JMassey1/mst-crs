@@ -1,25 +1,19 @@
 import React from "react";
-
-interface ListItemProps {
-  text: string;
-}
-
-const ListItem: React.FC<ListItemProps> = ({ text }) => {
-  return <li>{text}</li>;
-};
+import { Room } from "../types/DB_Types";
+import RoomCard from "./RoomCard";
 
 interface ListProps {
-  items: string[];
+  rooms: Room[];
 }
 
-const List: React.FC<ListProps> = ({ items }) => {
+const RoomList: React.FC<ListProps> = ({ rooms }) => {
   return (
     <ul>
-      {items.map((item, index) => (
-        <ListItem key={index} text={item} />
+      {rooms.map((item, index) => (
+        <RoomCard key={index} room={item} />
       ))}
     </ul>
   );
 };
 
-export default List;
+export default RoomList;
