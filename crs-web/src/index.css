@@ -27,6 +27,12 @@
   padding: 0;
 }
 
+/* sizing of map container */
+.leaflet-container {
+  height: 65vh;
+  width: 80vh;
+}
+
 .dropdown-building-button {
   position: relative;
   left: -550px;
