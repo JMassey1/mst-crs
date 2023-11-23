@@ -4,6 +4,7 @@ import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 import Dropdown from "react-bootstrap/Dropdown";
 import { Room } from "../types/DB_Types";
+import { useNavigate } from "react-router-dom";
 
 interface RoomCardProps {
   room: Room;
@@ -20,6 +21,13 @@ const RoomCard: React.FC<RoomCardProps> = ({ room }) => {
   const handleDurationSelect = (duration: string) => {
     setSelectedDuration(duration);
   };
+
+  let navigate = useNavigate();
+  const routeChange = () => {
+    let path = `/reserve`;
+    navigate(path);
+    navigate(0);
+  }
 
   return (
     <Card className="mb-3">
@@ -76,7 +84,7 @@ const RoomCard: React.FC<RoomCardProps> = ({ room }) => {
           </Dropdown>
         </div>
 
-        <Button variant="outline-success">Book Room</Button>
+        <Button variant="outline-success" onClick={routeChange}>Book Room</Button>
       </Card.Footer>
     </Card>
   );

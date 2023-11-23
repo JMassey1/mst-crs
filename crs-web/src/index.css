@@ -33,6 +33,22 @@
   width: 80vh;
 }
 
+.two-columns {
+  padding-top: 30px;
+  display: flex;
+  flex-direction: row;
+}
+
+.left-column {
+  width: 60%;
+}
+
+.right-column {
+  display: flex;
+  justify-content: center;
+  width: 40%;
+}
+
 .dropdown-building-button {
   position: relative;
   left: -550px;

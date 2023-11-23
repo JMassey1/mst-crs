@@ -45,6 +45,7 @@ const Home: React.FC = () => {
 
   return (
     <div>
+      <h4>Filter Rooms</h4>
       <ReservationDropdowns
         onReservationInfoChange={handleReservationInfoChange}
       />
