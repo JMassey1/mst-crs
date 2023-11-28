@@ -7,6 +7,6 @@ export type DropdownOption<T> = {
 
 export type ReservationData = {
   building: Building | null;
-  floor: number | null;
+  floor: string | null;
   capacity: Capacity | null;
 };

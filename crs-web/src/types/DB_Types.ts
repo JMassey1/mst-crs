@@ -10,21 +10,17 @@ export type Building = {
 export type Room = {
   id: number;
   identifier: string;
-  capacity: CapacityFromNumber;
+  capacity: number;
   size?: number;
   tv: boolean;
   projector: boolean;
   whiteboard: boolean;
   computers: boolean;
   building: Building;
+  floor: string;
 };
-
-type CapacityFromNumber = {
-  min: 1;
-  max: number;
-} & Capacity;
 
 export type Capacity = {
   min: number;
-  max: number | null;
+  max?: number;
 };
