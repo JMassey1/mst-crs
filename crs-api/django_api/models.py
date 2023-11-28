@@ -45,6 +45,7 @@ class Room(models.Model):
     whiteboard = models.BooleanField()
     computers = models.IntegerField()
     building = models.ForeignKey(Building, models.DO_NOTHING, db_column="building")
+    floor = models.CharField(max_length=10)
 
     class Meta:
         managed = False

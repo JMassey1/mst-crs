@@ -8,11 +8,17 @@ interface ListProps {
 
 const RoomList: React.FC<ListProps> = ({ rooms }) => {
   return (
-    <ul>
-      {rooms.map((item, index) => (
-        <RoomCard key={index} room={item} />
-      ))}
-    </ul>
+    <>
+      {rooms.length > 0 ? (
+        <ul style={{ padding: "0px" }}>
+          {rooms.map((item, index) => (
+            <RoomCard key={index} room={item} />
+          ))}
+        </ul>
+      ) : (
+        <p>No rooms found</p>
+      )}
+    </>
   );
 };
 
