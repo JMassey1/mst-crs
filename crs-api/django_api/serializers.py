@@ -9,9 +9,11 @@ class BuildingSerializer(serializers.ModelSerializer):
             "id",
             "name",
             "address",
+            "latitude",
+            "longitude",
             "floors",
             "open_time",
-            "close_time"
+            "close_time",
         )
 
 
@@ -23,6 +25,7 @@ class RoomSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "identifier",
+            "floor",
             "capacity",
             "size",
             "tv",
@@ -32,15 +35,12 @@ class RoomSerializer(serializers.ModelSerializer):
             "building",
         )
 
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = (
-            "id",
-            "email",
-            "name",
-            "password"
-        )
+        fields = ("id", "email", "name", "password")
+
 
 class BookingSerializer(serializers.ModelSerializer):
     room = RoomSerializer(read_only=True)

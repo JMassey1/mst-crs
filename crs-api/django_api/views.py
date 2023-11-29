@@ -21,6 +21,13 @@ class RoomsView(viewsets.ModelViewSet):
     serializer_class = RoomSerializer
     queryset = Room.objects.all()
 
+    # route: /api/rooms/<number> returns the room which matches the provided room id
+    @action(detail=False, url_path="(?P<room_id>\d+)")
+    def by_room_id(self, request, room_id=None):
+        rooms = self.queryset.filter(id=room_id)
+        serializer = self.get_serializer(rooms, many=True)
+        return Response(serializer.data)
+
     # route: /api/rooms/search returns a list of all the rooms in the database
     @action(detail=False, methods=["post"], url_path="search")
     def filter_rooms(self, request):

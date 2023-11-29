@@ -26,6 +26,8 @@ class Building(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50)
     address = models.CharField(max_length=100, blank=True, null=True)
+    latitude = models.FloatField(blank=True, null=False)
+    longitude = models.FloatField(blank=True, null=False)
     floors = models.IntegerField()
     open_time = models.TimeField()
     close_time = models.TimeField()

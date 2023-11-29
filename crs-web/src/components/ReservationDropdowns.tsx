@@ -141,7 +141,7 @@ const ReservationDropdowns: React.FC<ReservationDropdownsProps> = ({ onReservati
           placeholder={"Select Floor"}
         />
       </Col>
-      <Col className="mx-3">
+      <Col className="ml-3">
         <AsyncSelect
           key={`unique_dropdown_key_capacity_${selectedCapacity}`}
           isSearchable={false}

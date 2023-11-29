@@ -8,7 +8,8 @@ const routes = [
     errorElement: <NotFound />,
     children: [
       { path: "/", element: <Home /> },
-      { path: "/reserve", element: <Reserve />}],
+      { path: "/reserve/:roomId", element: <Reserve /> },
+    ],
   },
 ];
 
