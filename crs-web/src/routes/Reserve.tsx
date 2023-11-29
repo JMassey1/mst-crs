@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 
-import { Card } from "react-bootstrap";
 import { MapContainer, Marker, TileLayer } from "react-leaflet";
 import { Tooltip } from "react-leaflet/Tooltip";
 import { useNavigate, useParams } from "react-router-dom";
