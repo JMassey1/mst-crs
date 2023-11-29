@@ -6,7 +6,7 @@ function Nav() {
     <>
       <Navbar style={{ backgroundColor: "#003B49" }}>
         <Container>
-          <Navbar.Brand href="#home">
+          <Navbar.Brand href="/">
             <img
               alt=""
               src="../../mstlogo.png"
