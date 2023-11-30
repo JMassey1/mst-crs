@@ -34,15 +34,24 @@ const Reserve: React.FC = () => {
         </div>
         {room ? (
           <div className="right-column">
-            <MapContainer center={[room.building.longitude, room.building.latitude]} zoom={17}>
-              <TileLayer attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' url="https://tile.openstreetmap.org/{z}/{x}/{y}.png" />
-              <Marker position={[room.building.longitude, room.building.latitude]}>
-                <Tooltip direction="bottom" offset={[-15, 30]} permanent>
-                  <p className="text-center text-capitalize mb-2">{room.building.name}</p>
-                  <p className="text-center fst-italic mb-0">{room.building.address}</p>
-                </Tooltip>
-              </Marker>
-            </MapContainer>
+            <div className="right-column-content">
+              <div>
+                <MapContainer center={[room.building.longitude, room.building.latitude]} zoom={17}>
+                  <TileLayer attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' url="https://tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                  <Marker position={[room.building.longitude, room.building.latitude]}>
+                    <Tooltip direction="bottom" offset={[-15, 30]} permanent>
+                      <p className="text-center text-capitalize mb-2">{room.building.name}</p>
+                      <p className="text-center fst-italic mb-0">{room.building.address}</p>
+                    </Tooltip>
+                  </Marker>
+                </MapContainer>
+              </div>
+              <div>
+                <img className="image-padding-top"
+                  src={"../src/assets/" + room.building.id + "/" + room.identifier + ".png"}/>
+                <p>{"floor: " + room.floor + " - room: " + room.identifier + " - building: " + room.building.name}</p>
+              </div>
+            </div>
           </div>
         ) : (
           <p>Error finding Room</p>

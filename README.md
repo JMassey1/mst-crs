@@ -13,7 +13,6 @@ Back-end: Python Flask
 - Julia Stroud
 - Jordan Massey
 - Wesley Tyree
-- Drew Schulte
 - Jonah Yates
 - Josh Hagstrom
 - Selorm Sosuh

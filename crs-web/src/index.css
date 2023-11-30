@@ -49,6 +49,15 @@
   width: 40%;
 }
 
+.right-column-content {
+  display: block;
+}
+
+.image-padding-top {
+  padding-top: 20px;
+  width: 100%;
+}
+
 .dropdown-building-button {
   position: relative;
   left: -550px;
