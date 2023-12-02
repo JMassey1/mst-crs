@@ -1,9 +1,17 @@
 import { ReactNode, createContext } from "react";
 import api from "../api/api";
+import { useDebugLogger } from "../hooks/useDebugLogger";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 
-type UserContextProps = {
+export type User = {
+  username: string;
+  first_name: string;
+  last_name: string;
   auth_token: string;
+};
+
+type UserContextProps = {
+  user: User;
   login: (username: string, password: string) => Promise<boolean>;
   logout: () => void;
   isLoggedIn: () => boolean;
@@ -14,24 +22,26 @@ type UserContextProviderProps = {
 };
 
 export const UserContext = createContext<UserContextProps>({
-  auth_token: "",
+  user: { username: "", first_name: "", last_name: "", auth_token: "" },
   login: async () => false,
   logout: () => {},
   isLoggedIn: () => false,
 });
 
 export const UserContextProvider = ({ children }: UserContextProviderProps) => {
-  const [authToken, setAuthToken] = useLocalStorage<string>("authToken", "");
+  const [user, setUser] = useLocalStorage<User>("user", { username: "", first_name: "", last_name: "", auth_token: "" });
+  useDebugLogger(user);
 
   const login = async (username: string, password: string): Promise<boolean> => {
     return api
-      .post("auth-token/", {
+      .post("auth/", {
         username: username,
         password: password,
       })
       .then((response) => {
         if (response.status === 200) {
-          setAuthToken(response.data.token);
+          setUser({ username: username, first_name: response.data.first_name, last_name: response.data.last_name, auth_token: response.data.token });
+
           return true;
         } else {
           console.error(`Login failed with status ${response.status}`);
@@ -45,12 +55,12 @@ export const UserContextProvider = ({ children }: UserContextProviderProps) => {
   };
 
   const logout = () => {
-    setAuthToken("");
+    setUser({ username: "", first_name: "", last_name: "", auth_token: "" });
   };
 
   const isLoggedIn = (): boolean => {
-    return authToken !== "";
+    return user.auth_token !== "";
   };
 
-  return <UserContext.Provider value={{ auth_token: authToken, login: login, logout: logout, isLoggedIn: isLoggedIn }}>{children}</UserContext.Provider>;
+  return <UserContext.Provider value={{ user: user, login: login, logout: logout, isLoggedIn: isLoggedIn }}>{children}</UserContext.Provider>;
 };

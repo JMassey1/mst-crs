@@ -33,5 +33,5 @@ urlpatterns = [
     path("", views.index, name="index"),
     path("api/", include(router.urls)),
     path("auth-token/", auth_views.obtain_auth_token, name="auth-token"),
-    path("test/", views.TestView.as_view(), name="test"),
+    path("auth/", views.CustomAuthToken.as_view(), name="auth"),
 ]

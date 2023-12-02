@@ -1,6 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
 
 import { Card, Col, Form, Row } from "react-bootstrap";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import { MapContainer, Marker, TileLayer } from "react-leaflet";
 import { Tooltip } from "react-leaflet/Tooltip";
 import { useNavigate, useParams } from "react-router-dom";
@@ -14,12 +16,14 @@ const Reserve: React.FC = () => {
   const params = useParams<{ roomId: string }>();
   const navigate = useNavigate();
   const [room, setRoom] = useState<Room>();
+  const { user, isLoggedIn } = useContext(UserContext);
 
-  const { isLoggedIn } = useContext(UserContext);
+  const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(new Date());
 
   useEffect(() => {
     if (!isLoggedIn()) {
-      navigate("/home");
+      navigate("/");
     }
   });
 
@@ -35,7 +39,15 @@ const Reserve: React.FC = () => {
     fetchRoom();
   }, [navigate, params.roomId]);
 
-  return room ? (
+  const handleStartDateChange = (date: Date) => {
+    setStartDate(date);
+  };
+
+  const handleEndDateChange = (date: Date) => {
+    setEndDate(date);
+  };
+
+  return room && isLoggedIn() ? (
     <>
       <Card className="">
         <Card.Header>Room Reservation</Card.Header>
@@ -49,13 +61,19 @@ const Reserve: React.FC = () => {
         </Card.Body>
         <hr />
         <Card.Body style={{ marginTop: "-15px" }}>
-          <Card.Title className="fw-medium">Reservation Details</Card.Title>
+          <Card.Title className="fw-semibold mb-3">Reservation Details</Card.Title>
           <Row>
             <Col>
               <Form>
                 <Form.Group className="mb-3" controlId="formBasicEmail">
-                  <Form.Label>Full Name</Form.Label>
-                  <Form.Control type="text" placeholder="Enter your full name" />
+                  <Form.Label className="mb-1">First Name</Form.Label>
+                  <Form.Control type="text" value={user.first_name} disabled />
+                  <Form.Label className="mt-2 mb-1">Last Name</Form.Label>
+                  <Form.Control type="text" value={user.last_name} disabled />
+                  <Row className="d-flex flex-row">
+                    <DatePicker selected={startDate} onChange={handleStartDateChange} showTimeSelect />
+                    <DatePicker selected={endDate} onChange={handleEndDateChange} showTimeSelect />
+                  </Row>
                 </Form.Group>
               </Form>
             </Col>

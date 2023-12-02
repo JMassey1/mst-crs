@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Button, Form, Modal, Spinner } from "react-bootstrap";
 import { UserContext } from "../contexts/UserAuthContext";
 
@@ -9,6 +9,11 @@ const AuthButton: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const { login, logout, isLoggedIn } = useContext(UserContext);
+
+  useEffect(() => {
+    setUsername("");
+    setPassword("");
+  }, [showModal]);
 
   const handleUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUsername(event.target.value);
@@ -26,9 +31,9 @@ const AuthButton: React.FC = () => {
       handleCloseModal();
     } else {
       alert("Login failed, please try again");
-      setUsername("");
-      setPassword("");
     }
+    setUsername("");
+    setPassword("");
   };
 
   const handleLogout = () => {
@@ -67,7 +72,17 @@ const AuthButton: React.FC = () => {
 
             <Form.Group controlId="formPassword">
               <Form.Label>Password</Form.Label>
-              <Form.Control type="password" value={password} onChange={handlePasswordChange} placeholder="Enter password" />
+              <Form.Control
+                type="password"
+                value={password}
+                onChange={handlePasswordChange}
+                onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
+                  if (event.key === "Enter") {
+                    handleLogin();
+                  }
+                }}
+                placeholder="Enter password"
+              />
             </Form.Group>
           </Form>
         </Modal.Body>

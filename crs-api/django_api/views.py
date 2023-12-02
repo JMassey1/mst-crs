@@ -1,7 +1,7 @@
-from math import floor
-
 from django.http import HttpResponse
 from rest_framework import viewsets
+from rest_framework.authtoken.models import Token
+from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -20,13 +20,23 @@ def index(self):
     return HttpResponse("API is working!! :D")
 
 
-class TestView(APIView):
-    permission_classes = [IsAuthenticated]
+class CustomAuthToken(ObtainAuthToken):
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(
+            data=request.data, context={"request": request}
+        )
+        serializer.is_valid(raise_exception=True)
 
-    def get(self, request):
-        user = request.user
-        print(user.first_name)
-        return Response({"message": f"Hello, {user.username}!"})
+        user = serializer.validated_data["user"]
+        token, created = Token.objects.get_or_create(user=user)
+        return Response(
+            {
+                "token": token.key,
+                "username": user.username,
+                "first_name": user.first_name,
+                "last_name": user.last_name,
+            }
+        )
 
 
 class RoomsView(viewsets.ModelViewSet):
