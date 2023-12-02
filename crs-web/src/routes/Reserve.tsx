@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 import { Card, Col, Form, Row } from "react-bootstrap";
 import { MapContainer, Marker, TileLayer } from "react-leaflet";
@@ -6,6 +6,7 @@ import { Tooltip } from "react-leaflet/Tooltip";
 import { useNavigate, useParams } from "react-router-dom";
 import "../../node_modules/leaflet/dist/leaflet.css";
 import api from "../api/api";
+import { UserContext } from "../contexts/UserAuthContext";
 import "../index.css";
 import { Room } from "../types/DB_Types";
 
@@ -14,9 +15,17 @@ const Reserve: React.FC = () => {
   const navigate = useNavigate();
   const [room, setRoom] = useState<Room>();
 
+  const { isLoggedIn } = useContext(UserContext);
+
+  useEffect(() => {
+    if (!isLoggedIn()) {
+      navigate("/home");
+    }
+  });
+
   useEffect(() => {
     const fetchRoom = async () => {
-      const response = await api.get(`rooms/${params.roomId}`);
+      const response = await api.get(`api/rooms/${params.roomId}`);
       if (response.status === 200 && response.data[0].id) {
         setRoom(response.data[0]);
       } else {
@@ -31,7 +40,6 @@ const Reserve: React.FC = () => {
       <Card className="">
         <Card.Header>Room Reservation</Card.Header>
         <Card.Body style={{ marginBottom: "-15px" }}>
-          {/* {`${formatSentence(room.building.name)} (${room.identifier.toUpperCase()})`} */}
           <Card.Title className="d-flex flex-row">
             <span className="fw-semibold text-capitalize">{room.building.name.toLowerCase()}</span>
           </Card.Title>

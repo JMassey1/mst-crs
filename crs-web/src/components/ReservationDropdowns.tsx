@@ -42,7 +42,7 @@ const ReservationDropdowns: React.FC<ReservationDropdownsProps> = ({ onReservati
   };
 
   const fetchBuildingOptions = (): Promise<DropdownOption<Building>[]> => {
-    return api.get<Building[]>("buildings").then((response) => {
+    return api.get<Building[]>("api/buildings").then((response) => {
       const options: DropdownOption<Building>[] = [];
       response.data.forEach((building: Building) => {
         options.push({
@@ -55,7 +55,7 @@ const ReservationDropdowns: React.FC<ReservationDropdownsProps> = ({ onReservati
   };
 
   const fetchFloorOptions = (): Promise<DropdownOption<string>[]> => {
-    return api.get<string[]>("rooms/floors").then((response) => {
+    return api.get<string[]>("api/rooms/floors").then((response) => {
       const options: DropdownOption<string>[] = [];
       response.data.forEach((floor: string) => {
         options.push({
@@ -80,7 +80,7 @@ const ReservationDropdowns: React.FC<ReservationDropdownsProps> = ({ onReservati
   };
 
   const fetchCapacityOptions = (): Promise<DropdownOption<Capacity>[]> => {
-    return api.get<number[]>("rooms/capacities").then((response) => {
+    return api.get<number[]>("api/rooms/capacities").then((response) => {
       const capacities: number[] = response.data.sort((a, b) => a - b);
       const options: DropdownOption<Capacity>[] = [
         { label: "1-5 people", value: { min: 1, max: 5 } },

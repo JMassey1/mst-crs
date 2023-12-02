@@ -1,20 +1,32 @@
 from math import floor
-from django.http import HttpResponse
 
+from django.http import HttpResponse
 from rest_framework import viewsets
 from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.views import APIView
+
+from .models import Booking, Building, Room, User
 from .serializers import (
-    RoomSerializer,
-    BuildingSerializer,
-    UserSerializer,
     BookingSerializer,
+    BuildingSerializer,
+    RoomSerializer,
+    UserSerializer,
 )
-from .models import Room, Building, User, Booking
 
 
 def index(self):
     return HttpResponse("API is working!! :D")
+
+
+class TestView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        print(user.first_name)
+        return Response({"message": f"Hello, {user.username}!"})
 
 
 class RoomsView(viewsets.ModelViewSet):
@@ -102,12 +114,57 @@ class UsersView(viewsets.ModelViewSet):
 
 
 class BookingsView(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+
     serializer_class = BookingSerializer
     queryset = Booking.objects.all()
 
-    # route: /api/bookings/<number> returns the rooms which match the user id
-    @action(detail=False, url_path="(?P<user_id>\d+)")
-    def by_user(self, request, user_id=None):
-        bookings = self.queryset.filter(created_by=user_id)
-        serializer = self.get_serializer(bookings, many=True)
-        return Response(serializer.data)
+    # route: /api/bookings/create creates a new booking
+    @action(detail=False, methods=["post"], url_path="create")
+    def create_booking(self, request):
+        params = request.data
+        user = request.user
+
+        room_id = params.get("room_id", None)
+        start_time = params.get("start_time", None)
+        end_time = params.get("end_time", None)
+        num_people = params.get("num_people", None)
+
+        name = user.username
+
+        if room_id is None:
+            return Response({"error": "room_id is required"})
+        if start_time is None:
+            return Response({"error": "start_time is required"})
+        if end_time is None:
+            return Response({"error": "end_time is required"})
+        if num_people is None:
+            return Response({"error": "num_people is required"})
+
+        # check if room exists
+        room = Room.objects.filter(id=room_id)
+        if not room.exists():
+            return Response({"error": "room does not exist"})
+        room = room.first()
+
+        # check if room is available
+        bookings = Booking.objects.filter(room=room_id)
+        for booking in bookings:
+            if booking.start_time <= start_time <= booking.end_time:
+                # Does booking start during another booking?
+                return Response({"error": "room is not available"})
+            if booking.start_time <= end_time <= booking.end_time:
+                # Does booking end during another booking?
+                return Response({"error": "room is not available"})
+            if start_time <= booking.start_time <= end_time:
+                # Does another booking start during this booking?
+                return Response({"error": "room is not available"})
+            if start_time <= booking.end_time <= end_time:
+                # Does another booking end during this booking?
+                return Response({"error": "room is not available"})
+
+        # Create booking
+        # booking = Booking(
+        #     name=user.first_name,
+        #     create_by
+        # )

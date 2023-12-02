@@ -1,5 +1,6 @@
 import Container from "react-bootstrap/Container";
 import Navbar from "react-bootstrap/Navbar";
+import AuthButton from "./AuthButton";
 
 function Nav() {
   return (
@@ -7,16 +8,9 @@ function Nav() {
       <Navbar style={{ backgroundColor: "#003B49" }}>
         <Container>
           <Navbar.Brand href="/">
-            <img
-              alt=""
-              src="../../mstlogo.png"
-              width="30"
-              height="30"
-              className="d-inline-block align-top"
-              style={{ backgroundColor: "#72BF44" }}
-            />{" "}
-            <span className="text-white">CAMPUS RESERVATION SYSTEM</span>
+            <img alt="" src="../../mstlogo.png" width="30" height="30" className="d-inline-block align-top" style={{ backgroundColor: "#72BF44" }} /> <span className="text-white">CAMPUS RESERVATION SYSTEM</span>
           </Navbar.Brand>
+          <AuthButton />
         </Container>
       </Navbar>
     </>

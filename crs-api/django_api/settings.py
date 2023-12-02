@@ -36,6 +36,12 @@ ALLOWED_HOSTS = [
     "127.0.0.1",
 ]
 
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.TokenAuthentication",
+    ]
+}
+
 
 # Application definition
 
@@ -48,6 +54,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django_api",
     "rest_framework",
+    "rest_framework.authtoken",
     "corsheaders",
 ]
 
