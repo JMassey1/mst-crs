@@ -1,6 +1,5 @@
 import { ReactNode, createContext } from "react";
 import api from "../api/api";
-import { useDebugLogger } from "../hooks/useDebugLogger";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 
 export type User = {
@@ -30,7 +29,6 @@ export const UserContext = createContext<UserContextProps>({
 
 export const UserContextProvider = ({ children }: UserContextProviderProps) => {
   const [user, setUser] = useLocalStorage<User>("user", { username: "", first_name: "", last_name: "", auth_token: "" });
-  useDebugLogger(user);
 
   const login = async (username: string, password: string): Promise<boolean> => {
     return api

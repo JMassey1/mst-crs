@@ -1,8 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 
-import { Card, Col, Form, Row } from "react-bootstrap";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
+import { Button, Card, Col, Dropdown, DropdownButton, Form, InputGroup, Row } from "react-bootstrap";
 import { MapContainer, Marker, TileLayer } from "react-leaflet";
 import { Tooltip } from "react-leaflet/Tooltip";
 import { useNavigate, useParams } from "react-router-dom";
@@ -12,14 +10,47 @@ import { UserContext } from "../contexts/UserAuthContext";
 import "../index.css";
 import { Room } from "../types/DB_Types";
 
+import moment from "moment";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { FaRegCalendarAlt } from "react-icons/fa";
+import { MdClear } from "react-icons/md";
+import { useDebugLogger } from "../hooks/useDebugLogger";
+
+const getTimes = (start: string, end: string) => {
+  const startTime = moment(start, "HH:mm:ss");
+  const endTime = moment(end, "HH:mm:ss");
+
+  const times = [];
+  while (startTime <= endTime) {
+    times.push(startTime.toDate());
+    startTime.add(30, "minutes");
+  }
+
+  return times;
+};
+
 const Reserve: React.FC = () => {
   const params = useParams<{ roomId: string }>();
   const navigate = useNavigate();
   const [room, setRoom] = useState<Room>();
   const { user, isLoggedIn } = useContext(UserContext);
 
-  const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(new Date());
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
+  useDebugLogger(endDate);
+
+  const handleStartDateChange = (date: Date | null) => {
+    setStartDate(date);
+  };
+
+  const handleEndDateChange = (date: Date | null) => {
+    if (startDate && date && date < startDate) {
+      alert("End date must be after start date");
+    } else {
+      setEndDate(date);
+    }
+  };
 
   useEffect(() => {
     if (!isLoggedIn()) {
@@ -39,14 +70,6 @@ const Reserve: React.FC = () => {
     fetchRoom();
   }, [navigate, params.roomId]);
 
-  const handleStartDateChange = (date: Date) => {
-    setStartDate(date);
-  };
-
-  const handleEndDateChange = (date: Date) => {
-    setEndDate(date);
-  };
-
   return room && isLoggedIn() ? (
     <>
       <Card className="">
@@ -61,21 +84,78 @@ const Reserve: React.FC = () => {
         </Card.Body>
         <hr />
         <Card.Body style={{ marginTop: "-15px" }}>
-          <Card.Title className="fw-semibold mb-3">Reservation Details</Card.Title>
           <Row>
             <Col>
-              <Form>
-                <Form.Group className="mb-3" controlId="formBasicEmail">
-                  <Form.Label className="mb-1">First Name</Form.Label>
-                  <Form.Control type="text" value={user.first_name} disabled />
-                  <Form.Label className="mt-2 mb-1">Last Name</Form.Label>
-                  <Form.Control type="text" value={user.last_name} disabled />
-                  <Row className="d-flex flex-row">
-                    <DatePicker selected={startDate} onChange={handleStartDateChange} showTimeSelect />
-                    <DatePicker selected={endDate} onChange={handleEndDateChange} showTimeSelect />
-                  </Row>
-                </Form.Group>
-              </Form>
+              <Card>
+                <Card.Header className="fw-semibold mb-3">Reservation Details</Card.Header>
+                <Card.Body>
+                  <Form>
+                    <InputGroup className="mb-3 d-flex justify-content-center">
+                      <InputGroup.Text>Name</InputGroup.Text>
+                      <Form.Control type="text" value={user.first_name + " " + user.last_name} disabled />
+                    </InputGroup>
+                    <InputGroup className="d-flex justify-content-center mb-2">
+                      <InputGroup.Text style={{ width: "20%" }}>Start Date</InputGroup.Text>
+                      <DatePicker
+                        showIcon
+                        showTimeSelect
+                        withPortal
+                        showPopperArrow={false}
+                        className=""
+                        selectsRange={false}
+                        selected={startDate}
+                        minDate={moment().toDate()}
+                        maxDate={moment().add(2, "weeks").toDate()}
+                        dateFormat={"MMMM d, h:mm aa"}
+                        includeTimes={getTimes(room.building.open_time, room.building.close_time)}
+                        onChange={handleStartDateChange}
+                        icon={<FaRegCalendarAlt className="mt-1" />}
+                        placeholderText="Select Date..."
+                      />
+                      <Button
+                        variant="outline-secondary"
+                        onClick={() => {
+                          setStartDate(null);
+                        }}
+                      >
+                        <MdClear />
+                      </Button>
+                    </InputGroup>
+                    <InputGroup className="d-flex justify-content-center">
+                      <InputGroup.Text style={{ width: "20%" }}>End Date</InputGroup.Text>
+                      <DatePicker
+                        showIcon
+                        showTimeSelect
+                        withPortal
+                        showPopperArrow={false}
+                        className=""
+                        selectsRange={false}
+                        selected={endDate}
+                        minDate={moment().toDate()}
+                        maxDate={moment().add(2, "weeks").toDate()}
+                        dateFormat={"MMMM d, h:mm aa"}
+                        includeTimes={getTimes(room.building.open_time, room.building.close_time)}
+                        onChange={handleEndDateChange}
+                        icon={<FaRegCalendarAlt className="mt-1" />}
+                        placeholderText="Select Date..."
+                      />
+                      <Button
+                        variant="outline-secondary"
+                        onClick={() => {
+                          setEndDate(null);
+                        }}
+                      >
+                        <MdClear />
+                      </Button>
+                    </InputGroup>
+                  </Form>
+                </Card.Body>
+                <Card.Footer className="d-flex flex-row-reverse">
+                  <Button variant="outline-primary" disabled={!startDate || !endDate}>
+                    Reserve
+                  </Button>
+                </Card.Footer>
+              </Card>
             </Col>
             <Col>
               <MapContainer center={[room.building.longitude, room.building.latitude]} zoom={17}>
