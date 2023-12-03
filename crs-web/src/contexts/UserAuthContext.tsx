@@ -14,6 +14,7 @@ type UserContextProps = {
   login: (username: string, password: string) => Promise<boolean>;
   logout: () => void;
   isLoggedIn: () => boolean;
+  getAuthHeader: () => { Authorization: string };
 };
 
 type UserContextProviderProps = {
@@ -25,6 +26,7 @@ export const UserContext = createContext<UserContextProps>({
   login: async () => false,
   logout: () => {},
   isLoggedIn: () => false,
+  getAuthHeader: () => ({ Authorization: "" }),
 });
 
 export const UserContextProvider = ({ children }: UserContextProviderProps) => {
@@ -60,5 +62,9 @@ export const UserContextProvider = ({ children }: UserContextProviderProps) => {
     return user.auth_token !== "";
   };
 
-  return <UserContext.Provider value={{ user: user, login: login, logout: logout, isLoggedIn: isLoggedIn }}>{children}</UserContext.Provider>;
+  const getAuthHeader = () => {
+    return { Authorization: `Token ${user.auth_token}` };
+  };
+
+  return <UserContext.Provider value={{ user: user, login: login, logout: logout, isLoggedIn: isLoggedIn, getAuthHeader: getAuthHeader }}>{children}</UserContext.Provider>;
 };

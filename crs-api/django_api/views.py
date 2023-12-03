@@ -1,4 +1,5 @@
 from django.http import HttpResponse
+import pytz
 from rest_framework import viewsets
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
@@ -8,6 +9,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .models import Booking, Building, Room, User
+from datetime import datetime
+from dateutil import parser
 from .serializers import (
     BookingSerializer,
     BuildingSerializer,
@@ -21,6 +24,7 @@ def index(self):
 
 
 class CustomAuthToken(ObtainAuthToken):
+    # This kinda sucks, but to get tokens to actually work, we need to reset the database schema and that's a pain
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(
             data=request.data, context={"request": request}
@@ -136,8 +140,12 @@ class BookingsView(viewsets.ModelViewSet):
         user = request.user
 
         room_id = params.get("room_id", None)
-        start_time = params.get("start_time", None)
-        end_time = params.get("end_time", None)
+
+        start_time_str = params.get("start_time", None)
+        end_time_str = params.get("end_time", None)
+
+        start_time = parser.isoparse(start_time_str)
+        end_time = parser.isoparse(end_time_str)
         num_people = params.get("num_people", None)
 
         name = user.username
@@ -160,21 +168,26 @@ class BookingsView(viewsets.ModelViewSet):
         # check if room is available
         bookings = Booking.objects.filter(room=room_id)
         for booking in bookings:
-            if booking.start_time <= start_time <= booking.end_time:
+            if booking.start_date <= start_time < booking.end_date:
                 # Does booking start during another booking?
-                return Response({"error": "room is not available"})
-            if booking.start_time <= end_time <= booking.end_time:
+                return Response({"error": "Room is Not Available 1"}, status=404)
+            if booking.start_date < end_time <= booking.end_date:
                 # Does booking end during another booking?
-                return Response({"error": "room is not available"})
-            if start_time <= booking.start_time <= end_time:
+                return Response({"error": "Room is Not Available 2"}, status=404)
+            if start_time <= booking.start_date < end_time:
                 # Does another booking start during this booking?
-                return Response({"error": "room is not available"})
-            if start_time <= booking.end_time <= end_time:
+                return Response({"error": "Room is Not Available 3"}, status=404)
+            if start_time < booking.end_date <= end_time:
                 # Does another booking end during this booking?
-                return Response({"error": "room is not available"})
+                return Response({"error": "Room is Not Available 4"}, status=404)
 
-        # Create booking
-        # booking = Booking(
-        #     name=user.first_name,
-        #     create_by
-        # )
+        booking = Booking(
+            name=name,
+            room=room,
+            start_date=start_time,
+            end_date=end_time,
+            num_people=num_people,
+        )
+        booking.save()
+
+        return Response({"id": booking.id}, status=201)
