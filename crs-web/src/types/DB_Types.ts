@@ -1,5 +1,7 @@
 export type Building = {
   address: string;
+  longitude: number;
+  latitude: number;
   close_time: string;
   floors: number;
   id: number;

@@ -51,7 +51,7 @@ const Home: React.FC = () => {
           }
         }
 
-        const response = await api.post<Room[]>(`rooms/search/`, requestBody);
+        const response = await api.post<Room[]>(`api/rooms/search/`, requestBody);
         if (response.status === 200) {
           setRooms(response.data);
         }

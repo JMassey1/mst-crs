@@ -16,12 +16,7 @@ type Option = {
   value: number;
 };
 
-function DBItemDropdown({
-  disabled,
-  apiRoute,
-  placeholderText,
-  onSelect,
-}: DBItemDropdownProps) {
+function DBItemDropdown({ disabled, apiRoute, placeholderText, onSelect }: DBItemDropdownProps) {
   const [selectedValue, setSelectedValue] = useState<Option | null>(null);
 
   // handle selection
@@ -31,7 +26,7 @@ function DBItemDropdown({
   };
 
   const fetch = () => {
-    return api.get<Building[]>(apiRoute).then((response) => {
+    return api.get<Building[]>("api/" + apiRoute).then((response) => {
       const options: Option[] = [];
       response.data.forEach((building: Building) => {
         options.push({
@@ -43,18 +38,7 @@ function DBItemDropdown({
     });
   };
 
-  return (
-    <AsyncSelect
-      cacheOptions
-      defaultOptions
-      isDisabled={disabled}
-      value={selectedValue}
-      loadOptions={fetch}
-      onChange={handleChange}
-      isClearable={true}
-      placeholder={placeholderText}
-    />
-  );
+  return <AsyncSelect cacheOptions defaultOptions isDisabled={disabled} value={selectedValue} loadOptions={fetch} onChange={handleChange} isClearable={true} placeholder={placeholderText} />;
 }
 
 export default DBItemDropdown;

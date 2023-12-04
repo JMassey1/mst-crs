@@ -1,25 +1,58 @@
-from math import floor
 from django.http import HttpResponse
-
+import pytz
 from rest_framework import viewsets
+from rest_framework.authtoken.models import Token
+from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.views import APIView
+
+from .models import Booking, Building, Room, User
+from datetime import datetime
+from dateutil import parser
 from .serializers import (
-    RoomSerializer,
-    BuildingSerializer,
-    UserSerializer,
     BookingSerializer,
+    BuildingSerializer,
+    RoomSerializer,
+    UserSerializer,
 )
-from .models import Room, Building, User, Booking
 
 
 def index(self):
     return HttpResponse("API is working!! :D")
 
 
+class CustomAuthToken(ObtainAuthToken):
+    # This kinda sucks, but to get tokens to actually work, we need to reset the database schema and that's a pain
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(
+            data=request.data, context={"request": request}
+        )
+        serializer.is_valid(raise_exception=True)
+
+        user = serializer.validated_data["user"]
+        token, created = Token.objects.get_or_create(user=user)
+        return Response(
+            {
+                "token": token.key,
+                "username": user.username,
+                "first_name": user.first_name,
+                "last_name": user.last_name,
+            }
+        )
+
+
 class RoomsView(viewsets.ModelViewSet):
     serializer_class = RoomSerializer
     queryset = Room.objects.all()
+
+    # route: /api/rooms/<number> returns the room which matches the provided room id
+    @action(detail=False, url_path="(?P<room_id>\d+)")
+    def by_room_id(self, request, room_id=None):
+        rooms = self.queryset.filter(id=room_id)
+        serializer = self.get_serializer(rooms, many=True)
+        return Response(serializer.data)
 
     # route: /api/rooms/search returns a list of all the rooms in the database
     @action(detail=False, methods=["post"], url_path="search")
@@ -95,12 +128,66 @@ class UsersView(viewsets.ModelViewSet):
 
 
 class BookingsView(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+
     serializer_class = BookingSerializer
     queryset = Booking.objects.all()
 
-    # route: /api/bookings/<number> returns the rooms which match the user id
-    @action(detail=False, url_path="(?P<user_id>\d+)")
-    def by_user(self, request, user_id=None):
-        bookings = self.queryset.filter(created_by=user_id)
-        serializer = self.get_serializer(bookings, many=True)
-        return Response(serializer.data)
+    # route: /api/bookings/create creates a new booking
+    @action(detail=False, methods=["post"], url_path="create")
+    def create_booking(self, request):
+        params = request.data
+        user = request.user
+
+        room_id = params.get("room_id", None)
+
+        start_time_str = params.get("start_time", None)
+        end_time_str = params.get("end_time", None)
+
+        start_time = parser.isoparse(start_time_str)
+        end_time = parser.isoparse(end_time_str)
+        num_people = params.get("num_people", None)
+
+        name = user.username
+
+        if room_id is None:
+            return Response({"error": "room_id is required"})
+        if start_time is None:
+            return Response({"error": "start_time is required"})
+        if end_time is None:
+            return Response({"error": "end_time is required"})
+        if num_people is None:
+            return Response({"error": "num_people is required"})
+
+        # check if room exists
+        room = Room.objects.filter(id=room_id)
+        if not room.exists():
+            return Response({"error": "room does not exist"})
+        room = room.first()
+
+        # check if room is available
+        bookings = Booking.objects.filter(room=room_id)
+        for booking in bookings:
+            if booking.start_date <= start_time < booking.end_date:
+                # Does booking start during another booking?
+                return Response({"error": "Room is Not Available 1"}, status=404)
+            if booking.start_date < end_time <= booking.end_date:
+                # Does booking end during another booking?
+                return Response({"error": "Room is Not Available 2"}, status=404)
+            if start_time <= booking.start_date < end_time:
+                # Does another booking start during this booking?
+                return Response({"error": "Room is Not Available 3"}, status=404)
+            if start_time < booking.end_date <= end_time:
+                # Does another booking end during this booking?
+                return Response({"error": "Room is Not Available 4"}, status=404)
+
+        booking = Booking(
+            name=name,
+            room=room,
+            start_date=start_time,
+            end_date=end_time,
+            num_people=num_people,
+        )
+        booking.save()
+
+        return Response({"id": booking.id}, status=201)
