@@ -6,16 +6,13 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.views import APIView
 
-from .models import Booking, Building, Room, User
-from datetime import datetime
+from .models import Booking, Building, Room
 from dateutil import parser
 from .serializers import (
     BookingSerializer,
     BuildingSerializer,
     RoomSerializer,
-    UserSerializer,
 )
 
 
@@ -25,6 +22,7 @@ def index(self):
 
 class CustomAuthToken(ObtainAuthToken):
     # This kinda sucks, but to get tokens to actually work, we need to reset the database schema and that's a pain
+    # TODO: fix this
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(
             data=request.data, context={"request": request}
@@ -32,7 +30,7 @@ class CustomAuthToken(ObtainAuthToken):
         serializer.is_valid(raise_exception=True)
 
         user = serializer.validated_data["user"]
-        token, created = Token.objects.get_or_create(user=user)
+        token, _ = Token.objects.get_or_create(user=user)
         return Response(
             {
                 "token": token.key,
@@ -104,29 +102,6 @@ class BuildingsView(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
-class UsersView(viewsets.ModelViewSet):
-    serializer_class = UserSerializer
-    queryset = User.objects.all()
-
-    # route: /api/users/<number> returns the user which match the user id
-    @action(detail=False, url_path="(?P<user_id>\d+)")
-    def by_user_id(self, request, user_id=None):
-        users = self.queryset.filter(id=user_id)
-        serializer = self.get_serializer(users, many=True)
-        return Response(serializer.data)
-
-    # TODO: this one doesnt work, getting an error when testing
-    # route: /api/users/<email> returns the user which matches the user email
-    @action(
-        detail=False,
-        url_path="(?P<user_email>(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$))",
-    )
-    def by_email(self, request, user_email=None):
-        users = self.queryset.filter(email=user_email)
-        serializer = self.get_serializer(users, many=True)
-        return Response(serializer.data)
-
-
 class BookingsView(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
@@ -138,6 +113,7 @@ class BookingsView(viewsets.ModelViewSet):
     def create_booking(self, request):
         params = request.data
         user = request.user
+        auth = request.auth
 
         room_id = params.get("room_id", None)
 
@@ -170,16 +146,16 @@ class BookingsView(viewsets.ModelViewSet):
         for booking in bookings:
             if booking.start_date <= start_time < booking.end_date:
                 # Does booking start during another booking?
-                return Response({"error": "Room is Not Available 1"}, status=404)
+                return Response({"error": "Room is Not Available"}, status=404)
             if booking.start_date < end_time <= booking.end_date:
                 # Does booking end during another booking?
-                return Response({"error": "Room is Not Available 2"}, status=404)
+                return Response({"error": "Room is Not Available"}, status=404)
             if start_time <= booking.start_date < end_time:
                 # Does another booking start during this booking?
-                return Response({"error": "Room is Not Available 3"}, status=404)
+                return Response({"error": "Room is Not Available"}, status=404)
             if start_time < booking.end_date <= end_time:
                 # Does another booking end during this booking?
-                return Response({"error": "Room is Not Available 4"}, status=404)
+                return Response({"error": "Room is Not Available"}, status=404)
 
         booking = Booking(
             name=name,
@@ -187,7 +163,26 @@ class BookingsView(viewsets.ModelViewSet):
             start_date=start_time,
             end_date=end_time,
             num_people=num_people,
+            created_by=auth,
         )
         booking.save()
 
         return Response({"id": booking.id}, status=201)
+
+    # route: /api/bookings/mine returns the bookings that match the provided user token
+    @action(detail=False, methods=["get"], url_path="mine")
+    def get_bookings(self, request):
+        auth = request.auth
+        bookings = self.queryset.filter(created_by=auth)
+        serializer = self.get_serializer(bookings, many=True)
+        return Response(serializer.data)
+
+    # route: /api/bookings/<number>/cancel deletes the booking which matches the provided booking id
+    @action(detail=False, methods=["put"], url_path="(?P<booking_id>\d+)/cancel")
+    def delete_booking(self, request, booking_id=None):
+        auth = request.auth
+        booking = self.queryset.filter(id=booking_id, created_by=auth)
+        if not booking.exists():
+            return Response({"error": "booking does not exist"}, status=404)
+        booking.delete()
+        return Response(status=204)

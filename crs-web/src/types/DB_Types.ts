@@ -9,6 +9,16 @@ export type Building = {
   open_time: string;
 };
 
+export type Booking = {
+  id: number;
+  start_date: string;
+  end_date: string;
+  num_people: number;
+  name: string | null;
+  room: Room;
+  created_by: string;
+};
+
 export type Room = {
   id: number;
   identifier: string;

@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 import { Button, Card, Col, Form, InputGroup, Row } from "react-bootstrap";
 import { MapContainer, Marker, TileLayer } from "react-leaflet";
@@ -16,6 +17,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { FaRegCalendarAlt } from "react-icons/fa";
 import { FaRegTrashCan } from "react-icons/fa6";
 import { MdClear } from "react-icons/md";
+import { useAuthRequired } from "../hooks/useAuthRequired";
 
 const getTimes = (start: string, end: string) => {
   const startTime = moment(start, "HH:mm:ss");
@@ -40,13 +42,15 @@ const Reserve: React.FC = () => {
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [numberOfPeople, setNumberOfPeople] = useState<number>(0);
 
+  useAuthRequired(navigate);
+
   const handleStartDateChange = (date: Date | null) => {
     setStartDate(date);
   };
 
   const handleEndDateChange = (date: Date | null) => {
     if (startDate && date && date < startDate) {
-      alert("End date must be after start date");
+      toast.error("End date must be after start date");
     } else {
       setEndDate(date);
     }
@@ -55,12 +59,6 @@ const Reserve: React.FC = () => {
   const handlePeopleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setNumberOfPeople(parseInt(event.target.value));
   };
-
-  useEffect(() => {
-    if (!isLoggedIn()) {
-      navigate("/");
-    }
-  });
 
   const handleReserve = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -71,13 +69,19 @@ const Reserve: React.FC = () => {
       num_people: numberOfPeople,
     };
 
-    api.post("api/bookings/create/", reservation, { headers: getAuthHeader() }).then((response) => {
-      if (response.status === 201) {
-        alert("Reservation successful");
-      } else {
-        alert("Reservation failed");
-      }
-    });
+    const reserveToast = toast.loading("Reserving room...", { autoClose: false });
+
+    api
+      .post("api/bookings/create/", reservation, { headers: getAuthHeader() })
+      .then(() => {
+        toast.update(reserveToast, { render: "Room reserved!", type: "success", isLoading: false, autoClose: 1000 });
+        setTimeout(() => {
+          navigate("/");
+        }, 1000);
+      })
+      .catch((error) => {
+        toast.update(reserveToast, { render: error.response.data.error, type: "error", isLoading: false, autoClose: 1000 });
+      });
   };
 
   useEffect(() => {
