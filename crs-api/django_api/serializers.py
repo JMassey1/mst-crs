@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Room, Building, User, Booking
+from .models import Room, Building, Booking
 
 
 class BuildingSerializer(serializers.ModelSerializer):
@@ -36,15 +36,8 @@ class RoomSerializer(serializers.ModelSerializer):
         )
 
 
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ("id", "email", "name", "password")
-
-
 class BookingSerializer(serializers.ModelSerializer):
     room = RoomSerializer(read_only=True)
-    created_by = UserSerializer(read_only=True)
 
     class Meta:
         model = Booking

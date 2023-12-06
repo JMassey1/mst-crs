@@ -1,4 +1,5 @@
 import { ReactNode, createContext } from "react";
+import { toast } from "react-toastify";
 import api from "../api/api";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 
@@ -33,6 +34,7 @@ export const UserContextProvider = ({ children }: UserContextProviderProps) => {
   const [user, setUser] = useLocalStorage<User>("user", { username: "", first_name: "", last_name: "", auth_token: "" });
 
   const login = async (username: string, password: string): Promise<boolean> => {
+    const loginToast = toast.loading("Logging in...", { autoClose: false });
     return api
       .post("auth/", {
         username: username,
@@ -41,15 +43,15 @@ export const UserContextProvider = ({ children }: UserContextProviderProps) => {
       .then((response) => {
         if (response.status === 200) {
           setUser({ username: username, first_name: response.data.first_name, last_name: response.data.last_name, auth_token: response.data.token });
-
+          toast.update(loginToast, { render: "Login successful!", type: "success", isLoading: false, autoClose: 1500 });
           return true;
         } else {
-          console.error(`Login failed with status ${response.status}`);
+          toast.update(loginToast, { render: "Login failed...", type: "error", isLoading: false, autoClose: 1500 });
           return false;
         }
       })
       .catch((error) => {
-        console.error(`Login failed with status ${error}`);
+        toast.update(loginToast, { render: error.response.data.non_field_errors[0], type: "error", isLoading: false, autoClose: 1500 });
         return false;
       });
   };

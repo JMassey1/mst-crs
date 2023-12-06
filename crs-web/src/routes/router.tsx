@@ -1,6 +1,8 @@
+import AccountPage from "./Account";
 import Home from "./Home";
-import NotFound from "./NotFound";
 import Reserve from "./Reserve";
+import NotFound from "./errors/NotFound";
+import NotLoggedIn from "./errors/NotLoggedIn";
 
 const routes = [
   {
@@ -9,6 +11,8 @@ const routes = [
     children: [
       { path: "/", element: <Home /> },
       { path: "/reserve/:roomId", element: <Reserve /> },
+      { path: "/forbidden", element: <NotLoggedIn /> },
+      { path: "/account", element: <AccountPage /> },
     ],
   },
 ];
