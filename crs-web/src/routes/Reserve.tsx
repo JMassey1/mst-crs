@@ -60,7 +60,11 @@ const Reserve: React.FC = () => {
   };
 
   const handlePeopleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setNumberOfPeople(parseInt(event.target.value));
+    if (room && parseInt(event.target.value) > room.capacity) {
+      setNumberOfPeople(room.capacity);
+    } else {
+      setNumberOfPeople(parseInt(event.target.value));
+    }
   };
 
   const handleReserve = async (e: React.FormEvent) => {
@@ -155,7 +159,7 @@ const Reserve: React.FC = () => {
                     </InputGroup>
                     <InputGroup className="d-flex justify-content-center mb-2">
                       <InputGroup.Text>Number of People</InputGroup.Text>
-                      <Form.Control type="number" placeholder="Number of People" value={numberOfPeople} onChange={handlePeopleChange} />
+                      <Form.Control type="number" placeholder="Number of People" value={numberOfPeople} onChange={handlePeopleChange} max={room.capacity} />
                       <Button variant="outline-secondary" onClick={() => setNumberOfPeople(0)}>
                         <MdClear />
                       </Button>
