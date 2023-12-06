@@ -107,6 +107,14 @@ const Reserve: React.FC = () => {
           <Card.Subtitle className="d-flex flex-row">
             <span className="fst-italic">Room: {room.identifier.toUpperCase()}</span>
           </Card.Subtitle>
+          <Card.Body>
+            <span>• Capacity: {room.capacity}</span><br/>
+            <span>• Size: {room.size} sqft</span><br/>
+            <span>• Contains TV: {room.tv ? '✓' : 'X'}</span><br/>
+            <span>• Contains projector: {room.projector ? '✓' : 'X'}</span><br/>
+            <span>• Contains whiteboard: {room.whiteboard ? '✓' : 'X'}</span><br/>
+            <span>• Number computers: {room.computers}</span>
+          </Card.Body>
         </Card.Body>
         <hr />
         <Card.Body style={{ marginTop: "-15px" }}>
