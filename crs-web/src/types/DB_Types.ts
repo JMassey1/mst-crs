@@ -27,7 +27,7 @@ export type Room = {
   tv: boolean;
   projector: boolean;
   whiteboard: boolean;
-  computers: boolean;
+  computers: number;
   building: Building;
   floor: string;
 };
